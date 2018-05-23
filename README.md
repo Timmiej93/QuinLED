@@ -12,20 +12,21 @@ While creating and using my own QuinLED modules, I noticed some small issues in 
 I would suggest that you follow the links below in the order they're provided, this should make it easier to understand what's going on.
 
 What is provided:
-- [A guide on creating your own NodeMCU firmware for QuinLED](NodeMCU%20Firmware/README.md)
+- [A guide on creating your own NodeMCU firmware for QuinLED](NodeMCU%20Firmware/README.md)  
+  (This is completely optional, you can also use the firmware build provided by Quindor in the [Workshop Archive](http://blog.quindorian.org/2016/09/esp8266-led-lighting-setting-voltage-and-flashing-nodemcu.html/), or provided by [me](NodeMCU%20Firmware/nodemcu-master-6-modules-2018-05-18-18-09-02-integer.bin))
   - This way you can build your own firmware when you want to develop extra functionality for QuinLED, without guessing which modules you need.
-  - Since a new NodeMCU build may interfere with functionality, a working build is provided [here]()
 - [Completely revamped program code](Program%20code/README.md)
   - Fixes reboot when providing a brightness level outside the 0-1023 range
   - Fixes reboot when providing a non-four-digit fadetime
   - Adds flexibility for future development with more channels
   - Adds a web server, which allows updating the code Over The Air (OTA), so no need to attach wires after the first time!
-- [A different way of implementing QuinLED in Domoticz](Domoticz/README.md) (using dzVents)
+- [A different way of implementing QuinLED in Domoticz](Domoticz/README.md) (using dzVents)  
+  (Again, completely optional. You can also use [Quindor's method](http://blog.quindorian.org/2017/02/esp8266-led-lighting-using-quinled-with-domoticz.html/))
   - Enables all script editing to be done from the browser, through Domoticz. No command line needed
   - Eliminates the need for a script for every device, one script can handle all your devices
-- [A batch file](Batch%20file/README.md), that allows you to control your QuinLED modules easily through a command line interface
+- [A batch file](Batch%20file/README.md), that allows you to control your QuinLED modules easily through a command line interface  
+  (Also optional, this is just for ease of use)
   - Allows for quick and easy input, without having to remember the exact syntax of the command
-
 
 ## Conclusion
 If you followed all the readme's as linked above, you should now have:
