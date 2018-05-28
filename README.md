@@ -30,7 +30,20 @@ What is provided:
 
 ## Conclusion
 If you followed all the readme's as linked above, you should now have:
-  - A QuinLED module running my custom firmware and program code
-  - The ability to change the program code OTA
-  - An easy way to add new modules through the dzVents scripts
-  - A simple batch file that allows you to control the QuinLED modules through the command line quickly and easily.
+- A QuinLED module running my custom firmware and program code
+- The ability to change the program code OTA
+- An easy way to add new modules through the dzVents scripts
+- A simple batch file that allows you to control the QuinLED modules through the command line quickly and easily.
+
+## Contributing
+If you want to contribute to this repository in any way shape or form, please feel free to do so! Some suggestions:
+- Translations of the README files
+- Code improvements, changes, or additions
+- Well.. anything really
+
+To keep things clean, I do have the repo set to protected, meaning that I will have to approve any pull request manually. Some guidelines:
+- Use proper indentation
+- Try to use the same coding style as provided
+- Try to provided descriptive comments for at least each code block you add
+
+If you want to discuss your idea before you start working on it (which I'd recommend), feel free to open an issue on this repository.

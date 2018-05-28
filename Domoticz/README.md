@@ -1,6 +1,8 @@
 # Domoticz
 This completely replaces [this article](http://blog.quindorian.org/2017/02/esp8266-led-lighting-using-quinled-with-domoticz.html/), from the red line onwards. Please follow the linked article until the red line (so create the dummy hardware and the dimmer switch), then follow this guide.
 
+For more information about dzVents, please refer to [this amazingly detailed Domoticz Wiki page](https://www.domoticz.com/wiki/DzVents:_next_generation_LUA_scripting).
+
 <p align="center"><img src="../misc/images/Quindor_Blog.png" width="500"></p>
 
 This section is optional. You can also just follow Quindor's approach, but I personally think using my method is a lot easier.
