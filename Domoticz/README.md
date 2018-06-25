@@ -107,6 +107,7 @@ QL_FADETIME_OVERRIDE = {
 },
 ```
 
+### Fadetime override
 Fadetime override is a functionality that is probably best used from inside other scripts. For example, you normally want your light to turn on instantly, so you have the fadetime set to zero. However, you also want to use it as a wake-up light, where it very slowly gets brighter. Here you could have another script first set the fadetime override to a value like 300 (five minutes), then have it turn the lamp on, and then reset the fadetime override to nil, so it won't interfere with normal usage.
 
 ```lua
@@ -119,6 +120,7 @@ QL_RESOLUTION_OVERRIDE = {
 },
 ```
 
+### Resolution override
 Resolution override is a functionality that allows you to set a custom 'maximum brightness' for every dimmer device. Each of your QuinLED modules can dim in a range from 0 to 1023 (10 bits), but you may want some of your lights to be a bit less bright. Here you can set any value (between 0 and 1023), which will then be the new maximum brightness of that specific light.
 
 ```lua
@@ -139,6 +141,7 @@ QL_RESOLUTION_RAMP = {
 },
 ```
 
+### Resolution Ramping
 Resolution ramping is the most complex functionality so far. It allows you to have a custom dimming curve for each QuinLED module. The comment in the code above should give you a pretty good idea of how it works. In the image below you can see some dimming ramps. The X-axis represents the percentage set on your dimmer in Domoticz (0-1 represents 0 to 100 percent), and the Y-axis represents the actual output of your light (0-1 represents 0-1023).
 
 In the image below, you can see how a ramp value of 0.1 makes the light get bright very early in the dimming phase, already being at 80% of its maximum output when the dimmer in Domoticz is set to just 10%. On the other hand, a ramp value of 3 makes the light get brighter very slowly, outputing just over 50% of its maximum output when the dimmer in Domoticz is set to 80%. A ramp value of 1 represents the normal behaviour of the dimmer.
