@@ -21,10 +21,10 @@ return {
 	    
 	    -- "Global" stuff
 	    local helpers = domoticz.helpers
-		local command = "echo Fadetimer=%d, LED%d_target=%d | nc -w %d %s %s"
+		local command = helpers.QL_COMMAND
 		
 		-- Find the correct name
-	    local deviceName = domoticz.helpers.QL_NAME[device.name]
+	    local deviceName = helpers.QL_NAME[device.name]
 	    if (deviceName == nil or deviceName == "") then
 	        domoticz.log("Devicename \""..device.name.."\" unknown.", domoticz.LOG_ERROR)
 	        return
@@ -32,18 +32,45 @@ return {
 	    
 	    -- Handle brightness
 		local targetLevel = 0
-		if (device.active) then
-		    if (device.level < 4) then
-		        -- Override the lowest value on the slider to return the absolute lowest value QuinLED can handle
-		        targetLevel = 4
-	        else
-    		    -- Divide by 96 because the dummy dimmer always goes back to 96% for some reason
-                targetLevel = (device.level / 96) * domoticz.helpers.QL_RESOLUTION
+		if (device.active and device.level > 0) then
+		    
+		    -- Check if the resolution is overridden
+		    local resolution = helpers.QL_RESOLUTION_OVERRIDE[deviceName]
+		    if (resolution == nil) then
+		        resolution = helpers.QL_RESOLUTION
+	        end
+	        
+		    -- Get the normalized level [0-1]
+		    --  Divide by 96 because the dummy dimmer always goes back to 96% for some reason
+            local normTargetLevel = (device.level / 96)
+		    
+		    -- Apply the ramp setting, if available
+		    local exponent = helpers.QL_RESOLUTION_RAMP[deviceName]
+		    local rampedTargetLevel
+		    if (exponent ~= nil and type(exponent) == "number") then
+		        rampedTargetLevel = normTargetLevel^exponent
+		        domoticz.log("Ramped target level: "..normTargetLevel.." ^ "..exponent.." = "..rampedTargetLevel)
+	        end
+	        
+	        -- Set targetLevel to either the ramped or the normal level
+	        if (rampedTargetLevel ~= nil) then
+	            targetLevel = rampedTargetLevel * resolution
+            else
+                targetLevel = normTargetLevel * resolution
             end
+            
+            -- Add 4 (minimum value for the LED strip to light up) to make sure the
+            --  light always lights up at the lowest setting above zero.
+            targetLevel = targetLevel + 4
+        end
+        
+        -- Handle fadetime
+        local fadeTime = helpers.QL_FADETIME[deviceName]
+        if (fadeTime == nil) then
+            fadeTime = 0
         end
         
         -- Check if fadetime is overridden
-        local fadeTime = helpers.QL_FADETIME[deviceName]
         if (helpers.QL_FADETIME_OVERRIDE[deviceName] ~= nil) then
             fadeTime = helpers.QL_FADETIME_OVERRIDE[deviceName]
         end
@@ -64,3 +91,4 @@ return {
         domoticz.log("Command: "..tostring(command))
 	end
 }
+

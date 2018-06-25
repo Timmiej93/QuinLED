@@ -18,7 +18,7 @@ return {
 
 	execute = function(domoticz, device)
 	    
-		local command = "echo Fadetimer=%d, LED%d_target=%d | nc -w %d %s %s"
+		local command = domoticz.helpers.QL_COMMAND
 		
 		-- Start at a targetLevel of zero, set to maximum if the switch was turned on
 		local targetLevel = 0

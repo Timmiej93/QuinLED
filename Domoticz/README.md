@@ -47,18 +47,22 @@ If you don't have this global data database yet, simply create another new dzVen
 For the contents of the `global_data` script, please refer to the [`global_data.lua`](global_data.lua). You can paste this into the empty `global_data` script in Domoticz. You do need to edit this file though, so I'll explain it here:
 
 ```lua
+QL_COMMAND = "echo Fadetimer=%d, LED%d_target=%d | nc -w %d %s %s &",
+
 QL_PORT = "43333",
 QL_RESOLUTION = 1023,
 QL_TIMEOUT = 1,
 ```
 
-These three variables should probably be the same for all your QuinLED modules. 
+These four variables should probably be the same for all your QuinLED modules. 
+- `QL_COMMAND` should never be changed. This is the template for every command sent from Domoticz to your QuinLED modules.
 - `QL_PORT` should always be 43333, unless you changed this yourself. If you don't know if you changed it, you didn't.
 - `QL_RESOLUTION` refers to the number of dimming steps. Unless you changed this yourself, it should always be 1023.
 - `QL_TIMEOUT` refers to the maximum number of seconds a QuinLED module may take to respond to domoticz before it times out. If your devices are in an area with bad WiFi coverage, and they only respond sometimes, it may be wise to increase this number. For normal use, 1 should be fine.
 
 ```lua
 -- Linking switch name to global_data identifier
+--   REQUIRED
 QL_NAME = {
     ["QuinLED Dimmer1"] = "DIMMER1",
     ["QuinLED Dimmer2"] = "DIMMER2",
@@ -69,16 +73,22 @@ This section may be a bit confusing, but it basically links the name of the dimm
 
 ```lua
 -- IP address (String)
+--  REQUIRED
 QL_IP = {
     DIMMER1 = "192.168.0.200",
     DIMMER2 = "192.168.0.200",
 },
+
 -- Output channel (Integer)
+--  REQUIRED
 QL_CHANNEL = {
     DIMMER1 = 1,
     DIMMER2 = 2,
 },
+
 -- Fadetime (Integer) [ms]
+--  Enables you to set a custom fadetime per device.
+--  When an entry is missing, or is set to nil, the script will use the default value of zero.
 QL_FADETIME = {
     DIMMER1 = 0,
     DIMMER2 = 0,
@@ -86,3 +96,53 @@ QL_FADETIME = {
 ```
 
 These values should be pretty self explanatory, but basically they contain the IP address, channel, and fadetime for each dimmer switch you made. In this example, you can see thta `QuinLED Dimmer1` and `QuinLED Dimmer2` are both on the same QuinLED module, just on different channels, and they both change instantly (so a fadetime of zero).
+
+```lua
+-- Fadetime override (Integer) [ms]
+-- 	Enables you to (temporarilly) override the fadetime per device.
+--  When an entry is missing, or is set to nil, nothing will be overridden.
+QL_FADETIME_OVERRIDE = {
+    DIMMER1 = nil,
+    DIMMER2 = nil,
+},
+```
+
+Fadetime override is a functionality that is probably best used from inside other scripts. For example, you normally want your light to turn on instantly, so you have the fadetime set to zero. However, you also want to use it as a wake-up light, where it very slowly gets brighter. Here you could have another script first set the fadetime override to a value like 300 (five minutes), then have it turn the lamp on, and then reset the fadetime override to nil, so it won't interfere with normal usage.
+
+```lua
+-- Resolution override (Integer) [ms]
+--	Enables you to set a maximum dimming level per device.
+--  When an entry is missing, or is set to nil, the script will use the default resolution value.
+QL_RESOLUTION_OVERRIDE = {
+    DIMMER1 = nil,
+    DIMMER2 = nil,
+},
+```
+
+Resolution override is a functionality that allows you to set a custom 'maximum brightness' for every dimmer device. Each of your QuinLED modules can dim in a range from 0 to 1023 (10 bits), but you may want some of your lights to be a bit less bright. Here you can set any value (between 0 and 1023), which will then be the new maximum brightness of that specific light.
+
+```lua
+-- Resolution ramping (Float) (x^y, where y is defined in the QL_RESOLUTION_RAMP table below)
+-- Accepted values: Anything greater than zero.
+-- Recommended values: Anything between zero and five.
+
+-- For a visualisation of the dimming curve, go to https://www.desmos.com/calculator (or any other graphical calculator),
+-- and enter 'x^y' as the formula, where y is the number you enter in this table.
+-- When there is no entry for a device, x^1 is used, which results in a straight line.
+
+-- (0 < y < 1) results in a more 'agressive' dimming (gets brighter earlier, fine-tuning in the end)
+-- (1) results in a linear dimming.
+-- (1 < y < inf.) results in a more 'relaxed' dimming (fine-tuning in the beginning, gets brighter quickly at the end)
+QL_RESOLUTION_RAMP = {
+    DIMMER1 = 1.2,
+    DIMMER2 = 2,
+},
+```
+
+Resolution ramping is the most complex functionality so far. It allows you to have a custom dimming curve for each QuinLED module. The comment in the code above should give you a pretty good idea of how it works. In the image below you can see some dimming ramps. The X-axis represents the percentage set on your dimmer in Domoticz (0-1 represents 0 to 100 percent), and the Y-axis represents the actual output of your light (0-1 represents 0-1023).
+
+In the image below, you can see how a ramp value of 0.1 makes the light get bright very early in the dimming phase, already being at 80% of its maximum output when the dimmer in Domoticz is set to just 10%. On the other hand, a ramp value of 3 makes the light get brighter very slowly, outputing just over 50% of its maximum output when the dimmer in Domoticz is set to 80%. A ramp value of 1 represents the normal behaviour of the dimmer.
+
+An important thing to note here, is that no matter the ramp value, when the Domoticz dimmer is at 0%, the light will output nothing, and when the Domoticz dimmer is at 100%, the light will output at 100%.
+
+<p align="center"><img src="../misc/images/DimmingRamping_example.png"></p>
